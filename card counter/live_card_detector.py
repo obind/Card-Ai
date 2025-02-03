@@ -3,7 +3,9 @@ import numpy as np
 from tensorflow.keras.models import load_model
 
 # Modell und Klassen laden
-model = load_model("card_model.h5")
+model = load_model("#Pfad zum Modell")
+
+
 classes = ['hearts_2', 'hearts_3', 'hearts_4', 'hearts_5', 'hearts_6',
            'hearts_7', 'hearts_8', 'hearts_9', 'hearts_10', 'hearts_jack',
            'hearts_queen', 'hearts_king', 'hearts_ace']

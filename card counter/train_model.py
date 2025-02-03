@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 import os
 
 # Verzeichnis, wo die vorverarbeiteten Bilder liegen:
-DATASET_DIR = "datasets/processed_dataset"
+DATASET_DIR = os.getenv("DATASET_DIR", "../datasets/processed_dataset")
 
 # Modell soll später hier gespeichert werden:
-MODEL_PATH = "models/card_model.h5"
+MODEL_PATH = os.getenv("DATASET_DIR", "../models/card_model.h5")
 
 # Wie viele Epochen? (50 scheint erstmal gut, falls es zu Overfitting kommt, anpassen)
 EPOCHS = 50

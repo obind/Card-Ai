@@ -1,94 +1,86 @@
-# Card Recognition AI 🃏  
-Ein **Custom CNN**, das Spielkarten anhand visueller Merkmale erkennt und klassifiziert.  
+# Card Recognition AI 🃏
+Ein **Custom CNN**, das Spielkarten anhand visueller Merkmale erkennt und klassifiziert.
 
-## 📌 Setup & Installation  
+## 📌 Setup & Installation
 
-````bash
-# Voraussetzungen installieren
-pip install tensorflow keras numpy opencv-python matplotlib scikit-learn h5py
-````
+### 1. Voraussetzungen
+Bevor du startest, stelle sicher, dass du folgende Abhängigkeiten installiert hast:
 
-## 📂 Daten vorbereiten  
-````bash
-Bilder sammeln:  
-# - Speichere Kartenbilder unter raw_dataset/<Kartenname>/ (z. B. raw_dataset/hearts_2/)
-# - Mindestens 50 Bilder pro Karte, verschiedene Winkel & Beleuchtungen
+```bash
+pip install tensorflow keras numpy opencv-python matplotlib scikit-learn
+```
 
-Vorverarbeitung starten:
+```bash
+python -m venv venv  
+source venv/bin/activate  # (Mac/Linux)  
+venv\Scripts\activate  # (Windows)
+pip install -r requirements.txt
+```
+
+## 2. Daten vorbereiten
+### 📸 Bilder sammeln:
+- Speichere Kartenbilder unter `raw_dataset/<Kartenname>/` (z. B. `raw_dataset/hearts_2/`).
+- Mindestens **50 Bilder pro Karte**, verschiedene Winkel & Beleuchtungen.
+
+
+## 📖 Schreibweise der Kartennamen
+Um Kompatibilitätsprobleme zwischen den Skripten zu vermeiden, müssen Kartennamen einheitlich benannt werden. Verwende die folgende Schreibweise:
+
+- **Farben (Suits)**: `hearts`, `diamonds`, `spades`, `clubs`
+- **Werte (Values)**:
+  - Zahlenkarten: `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`
+  - Bildkarten: `jack`, `queen`, `king`, `ace`
+- **Formatierung**: `<Farbe>_<Wert>` (z. B. `hearts_2`, `spades_king`)
+- **Keine Großbuchstaben**: Nur Kleinbuchstaben erlaubt (`hearts_10` statt `Hearts_10`).
+- **Kein Leerzeichen, kein Sonderzeichen**: `_` als Trennzeichen nutzen.
+
+- **Nutze das Skript `capture_images.py`, um den Prozess zu vereinfachen**:
+  ```bash
+  python capture_images.py
+  ```
+  Dies ermöglicht das einfache Erfassen von Bildern direkt über die Kamera.
+  
+
+### 🔄 Vorverarbeitung starten:
+```bash
 python preprocess.py
-# Dies erstellt processed_dataset/ mit skalierten & optimierten Bildern.
-````
-
-## 🚀 Modell trainieren  
-````bash
-python train.py
-# Läuft für 50+ Epochen (kann angepasst werden)
-# Trainiert mit TensorFlow/Keras auf einem CNN-Modell
-# Das fertige Modell wird als heart_card_classifier_advanced.h5 gespeichert.
-````
-
-## 🎥 Live-Kartenerkennung  
-````bash
-python live_feed.py
-# Erkennt Karten per Webcam & zeigt das Ergebnis in Echtzeit an.
-# Falls Karten falsch erkannt werden, sollten mehr Trainingsdaten hinzugefügt werden.
-````
-
-## 📁 Dateistruktur  
-
-Das Projekt sollte diese Struktur haben:  
-
 ```
-card_counter/
-│── raw_dataset/            # Unverarbeitete Bilder
-│── processed_dataset/      # Vorverarbeitete Bilder (automatisch erstellt)
-│── models/                 # Hier wird das trainierte Modell gespeichert
-│   ├── heart_card_classifier_advanced.h5
-│── train.py                # Trainiert das Modell
-│── preprocess.py           # Skaliert und verarbeitet Bilder
-│── live_feed.py            # Live-Kamera-Feed mit Kartenerkennung
-│── README.md               # Diese Anleitung
-│── .gitignore              # Verhindert das Hochladen großer Dateien
+Dies erstellt `processed_dataset/` mit skalierten & optimierten Bildern.
+
+## 3. Modell trainieren
+```bash
+python train_model.py
 ```
+Das Modell wird unter `models/card_model.h5` gespeichert.
 
-## 🛠 Relativer Pfad für das Modell  
-Um sicherzustellen, dass das Skript unabhängig vom absoluten Dateisystem funktioniert, wurde der **relative Pfad** verwendet:  
+## 4. Live-Erkennung starten
+Bearbeite `live_card_detector.py` und stelle sicher, dass der Modellpfad korrekt ist:
 
-**In `live_feed.py`:**
-````python
-import os
+```python
+import cv2
+import numpy as np
 from tensorflow.keras.models import load_model
 
-model_path = os.path.join(os.getcwd(), "models", "heart_card_classifier_advanced.h5")
-model = load_model(model_path)
-````
+# Modell und Klassen laden
+model = load_model("#Pfad zum Modell")
 
-## 🔧 Anpassungen & Optimierungen  
-````bash
-# Epochen erhöhen: In train.py kann epochs=100 gesetzt werden für längeres Training.
-# Daten augmentieren: Mehr Variationen in ImageDataGenerator() hinzufügen.
-# Modell verbessern: Mehr CNN-Schichten oder Transfer Learning mit MobileNetV2 ausprobieren.
-````
+classes = ['hearts_2', 'hearts_3', 'hearts_4', 'hearts_5', 'hearts_6',
+           'hearts_7', 'hearts_8', 'hearts_9', 'hearts_10', 'hearts_jack',
+           'hearts_queen', 'hearts_king', 'hearts_ace']
 
-## ❓ FAQ & Fehlerbehebung  
-````bash
-# 1️⃣ Bekomme Fehler FileNotFoundError für die .h5-Datei?
-# - Stelle sicher, dass sich heart_card_classifier_advanced.h5 im models/ Ordner befindet.
-# - Falls nicht, trainiere das Modell erneut mit: 
-python train.py
+def detect_card(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(blurred, 50, 150)
+```
 
-# 2️⃣ Bekomme Fehler FileNotFoundError für processed_dataset/?
-# - Der Ordner wurde noch nicht erstellt. Führe die Vorverarbeitung aus:
-python preprocess.py
+Dann starte die Live-Erkennung mit:
+```bash
+python live_card_detector.py
+```
 
-# 3️⃣ Vorhersagen sind ungenau?
-# - Trainiere mit mehr Bildern oder verbessere die Augmentation in train.py.
-# - Füge verschiedene Winkel und Beleuchtungen zu den Trainingsbildern hinzu.
 
-# 4️⃣ Bekomme ModuleNotFoundError für TensorFlow oder Keras?
-pip install -r requirements.txt
-````
 
----
+Falls Karten manuell benannt oder gespeichert werden, müssen sie dieser Struktur folgen, damit sie in den Skripten korrekt erkannt werden.
 
-**🎯 Viel Erfolg mit der Card AI! 🚀**
+🎯 **Fertig! Dein Modell kann nun Karten erkennen!**
