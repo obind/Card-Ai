@@ -5,9 +5,42 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 import matplotlib.pyplot as plt
 import os
+import argparse
 
-# Verzeichnis, wo die vorverarbeiteten Bilder liegen:
-DATASET_DIR = os.getenv("DATASET_DIR", "../datasets/processed_dataset")
+# Argumente definieren
+parser = argparse.ArgumentParser(description="Trainiere das Kartenmodell")
+parser.add_argument("--dataset", type=str, choices=["raw", "processed"], help="Wähle den Datensatz: 'raw' für unbearbeitete Bilder, 'processed' für vorverarbeitete Bilder")
+args = parser.parse_args()
+
+# Basisverzeichnis korrekt setzen
+BASE_DATASET_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "datasets"))
+
+# Falls kein Argument übergeben wurde -> Benutzer fragen
+if args.dataset is None:
+    print("\n🔍 Wähle den Datensatz für das Training:")
+    print("1️⃣ Rohbilder (raw_dataset)")
+    print("2️⃣ Vorverarbeitete Bilder (processed_dataset)")
+    
+    choice = input("\nGib '1' für Rohbilder oder '2' für verarbeitete Bilder ein: ").strip()
+
+    if choice == "1":
+        DATASET_DIR = os.path.join(BASE_DATASET_PATH, "raw")
+        print("📂 Training mit **Rohbildern** gestartet!")
+    elif choice == "2":
+        DATASET_DIR = os.path.join(BASE_DATASET_PATH, "processed_dataset")
+        print("📂 Training mit **vorverarbeiteten Bildern** gestartet!")
+    else:
+        print("❌ Ungültige Eingabe. Training abgebrochen.")
+        exit(1)
+else:
+    # Falls per Argument übergeben, direkt setzen
+    DATASET_DIR = os.path.join(BASE_DATASET_PATH, "processed_dataset") if args.dataset == "processed" else os.path.join(BASE_DATASET_PATH, "raw")
+    print(f"📂 Training mit Daten aus: {DATASET_DIR}")
+
+# Prüfen, ob der gewählte Ordner existiert
+if not os.path.exists(DATASET_DIR):
+    raise FileNotFoundError(f"❌ Der Dataset-Ordner '{DATASET_DIR}' wurde nicht gefunden! Stelle sicher, dass er existiert.")
+
 
 # Modell soll später hier gespeichert werden:
 MODEL_PATH = os.getenv("DATASET_DIR", "../models/card_model.h5")

@@ -6,16 +6,28 @@ Ein **Custom CNN**, das Spielkarten anhand visueller Merkmale erkennt und klassi
 ### 1. Voraussetzungen
 Bevor du startest, stelle sicher, dass du folgende Abhängigkeiten installiert hast:
 
+#### Manuelle Installation der wichtigsten Pakete:
 ```bash
 pip install tensorflow keras numpy opencv-python matplotlib scikit-learn
 ```
 
+#### Nutzung einer virtuellen Umgebung:
 ```bash
 python -m venv venv  
 source venv/bin/activate  # (Mac/Linux)  
 venv\Scripts\activate  # (Windows)
 pip install -r requirements.txt
 ```
+Falls du TensorFlow nicht in der virtuellen Umgebung installiert hast, stelle sicher, dass es richtig installiert ist:
+```bash
+pip install tensorflow-macos  # Falls du einen Mac mit M1/M2 benutzt
+pip install tensorflow  # Für andere Systeme
+```
+Überprüfe, ob TensorFlow richtig installiert ist:
+```bash
+python -c "import tensorflow as tf; print(tf.__version__)"
+```
+
 
 ## 2. Daten vorbereiten
 ### 📸 Bilder sammeln:
