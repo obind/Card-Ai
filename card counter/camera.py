@@ -1,66 +1,68 @@
-import os
 import cv2
+import os
+import time
 
-# Hauptordner der Karten
-base_dir = "cards_dataset"
+# Hauptordner für Bilder
+RAW_DATA_DIR = "datasets/raw"
+os.makedirs(RAW_DATA_DIR, exist_ok=True)
 
-# Farben und Werte
-suits = ["hearts", "diamonds", "spades", "clubs"]
-values = [
-    "2", "3", "4", "5", "6", "7", "8", "9", "10",
-    "jack", "queen", "king", "ace"
-]
+# Debug-Modus (0 = aus, 1 = an)
+DEBUG = 1  
 
-# Kamera initialisieren
-cap = cv2.VideoCapture(0)
-if not cap.isOpened():
-    print("Fehler: Kamera konnte nicht geöffnet werden.")
-    exit()
+def log(msg):
+    """ Debug-Logger für schnelle Prints """
+    if DEBUG:
+        print(f"[LOG] {msg}")
 
-# Bilderanzahl pro Karte
-images_per_card = 20
+def create_card_folder(card_name):
+    """ Erstellt den Kartenordner, falls nicht vorhanden """
+    path = os.path.join(RAW_DATA_DIR, card_name)
+    os.makedirs(path, exist_ok=True)
+    return path
 
-# Alle Karten iterieren
-for suit in suits:
-    for value in values:
-        card_name = f"{suit}_{value}"
-        card_dir = os.path.join(base_dir, card_name)
-        os.makedirs(card_dir, exist_ok=True)
+def capture_images(card_name, frame_rate=2):
+    """ Startet die Kamera und nimmt Bilder auf """
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Fehler: Kamera konnte nicht geöffnet werden.")
+        return
 
-        # Überprüfen, wie viele Bilder bereits vorhanden sind
-        existing_images = len(os.listdir(card_dir))
-        if existing_images >= images_per_card:
-            print(f"Karte {card_name} bereits vollständig.")
-            continue
+    folder_path = create_card_folder(card_name)
+    last_time = time.time()
+    frame_count = len(os.listdir(folder_path))  # Falls schon Bilder existieren
+    log(f"Starte Aufnahme für: {card_name} (Vorhandene Bilder: {frame_count})")
 
-        print(f"Fotografiere jetzt: {card_name}")
-        print(f"Bilder benötigt: {images_per_card - existing_images}")
+    print("Drücke 'q', um die Aufnahme zu beenden.")
 
-        # Bilder aufnehmen
-        count = existing_images
-        while count < images_per_card:
-            ret, frame = cap.read()
-            if not ret:
-                print("Fehler beim Lesen der Kamera.")
-                break
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Fehler beim Lesen des Kamerafeeds.")
+            break
 
-            # Zeige den Live-Feed
-            cv2.imshow("Live Feed", frame)
+        # Live-Feed anzeigen
+        cv2.imshow("Live Video", frame)
 
-            # 's' drücken, um ein Bild zu speichern
-            if cv2.waitKey(1) & 0xFF == ord('s'):
-                img_path = os.path.join(card_dir, f"img{count + 1}.jpg")
-                cv2.imwrite(img_path, frame)
-                print(f"Bild gespeichert: {img_path}")
-                count += 1
+        # Alle paar Sekunden speichern
+        if time.time() - last_time > 1 / frame_rate:
+            frame_count += 1
+            img_path = os.path.join(folder_path, f"img{frame_count}.jpg")
+            cv2.imwrite(img_path, frame)
+            log(f"📸 Bild gespeichert: {img_path}")
+            last_time = time.time()
 
-            # 'q' drücken, um das Programm zu beenden
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                print("Beenden...")
-                cap.release()
-                cv2.destroyAllWindows()
-                exit()
+        # Abbruch mit 'q'
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("Beende Aufnahme...")
+            break
 
-print("Alle Karten fotografiert!")
-cap.release()
-cv2.destroyAllWindows()
+    cap.release()
+    cv2.destroyAllWindows()
+    log(f"✅ Aufnahme abgeschlossen. {frame_count} Bilder gespeichert in {folder_path}.")
+
+if __name__ == "__main__":
+    card_name = input("🃏 Name der Karte (z.B. hearts_2): ").strip().lower()
+    if card_name == "":
+        print("❌ Kein Name eingegeben. Beende Skript.")
+    else:
+        capture_images(card_name)
