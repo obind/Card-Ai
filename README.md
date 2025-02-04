@@ -70,36 +70,6 @@ python train_model.py  # Falls du die Rohbilder nutzen möchtest
 ```
 Das Modell wird unter `models/card_model.h5` gespeichert.
 
-## 4. Live-Erkennung starten
-Bearbeite `live_card_detector.py` und stelle sicher, dass der Modellpfad korrekt ist:
-
-```python
-import cv2
-import numpy as np
-from tensorflow.keras.models import load_model
-
-# Modell und Klassen laden
-model = load_model("#Pfad zum Modell")
-
-classes = ['hearts_2', 'hearts_3', 'hearts_4', 'hearts_5', 'hearts_6',
-           'hearts_7', 'hearts_8', 'hearts_9', 'hearts_10', 'hearts_jack',
-           'hearts_queen', 'hearts_king', 'hearts_ace']
-
-def detect_card(frame):
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    edges = cv2.Canny(blurred, 50, 150)
-```
-
-Dann starte die Live-Erkennung mit:
-```bash
-python live_card_detector.py
-```
-
-Falls Karten manuell benannt oder gespeichert werden, müssen sie dieser Struktur folgen, damit sie in den Skripten korrekt erkannt werden.
-
-
-
 ## 🏆 Über den Autor
 Dieses Projekt wurde von **Kenneth Ballen Kallmann** entwickelt.  
 Falls du Fragen hast oder es weiterentwickeln möchtest, kontaktiere mich gerne auf GitHub:  
