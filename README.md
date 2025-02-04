@@ -11,31 +11,33 @@ Bevor du startest, stelle sicher, dass du folgende Abhängigkeiten installiert h
 pip install tensorflow keras numpy opencv-python matplotlib scikit-learn
 ```
 
-#### Nutzung einer virtuellen Umgebung:
+#### Nutzung einer virtuellen Umgebung (empfohlen):
 ```bash
 python -m venv venv  
 source venv/bin/activate  # (Mac/Linux)  
 venv\Scripts\activate  # (Windows)
 pip install -r requirements.txt
 ```
-Falls du TensorFlow nicht in der virtuellen Umgebung installiert hast, stelle sicher, dass es richtig installiert ist:
-```bash
-pip install tensorflow-macos  # Falls du einen Mac mit M1/M2 benutzt
-pip install tensorflow  # Für andere Systeme
-```
-Überprüfe, ob TensorFlow richtig installiert ist:
-```bash
-python -c "import tensorflow as tf; print(tf.__version__)"
-```
-
 
 ## 2. Daten vorbereiten
-### 📸 Bilder sammeln:
-- Speichere Kartenbilder unter `raw_dataset/<Kartenname>/` (z. B. `raw_dataset/hearts_2/`).
-- Mindestens **50 Bilder pro Karte**, verschiedene Winkel & Beleuchtungen.
+### 🎨 Beispielbilder
+Um den Einstieg zu erleichtern, wurden **Beispiel-Rohdaten** im Ordner `datasets/raw/` bereitgestellt. Diese Bilder können direkt genutzt werden, um das Modell zu trainieren. **Die vorverarbeiteten Bilder (`processed_dataset/`) wurden bewusst aus dem Commit entfernt**, um Speicherplatz zu sparen und die Übersichtlichkeit im Repository zu wahren.
 
 
-## 📖 Schreibweise der Kartennamen
+## 🔄 Automatisierter Workflow
+Falls du den gesamten Ablauf von Bilderfassung bis zur Modellnutzung automatisieren möchtest, kannst du `run_pipeline.py` verwenden:
+```bash
+python run_pipeline.py
+```
+Dieses Skript führt dich interaktiv durch den gesamten Prozess.
+
+
+Falls du eigene Bilder aufnehmen möchtest, kannst du das Skript `capture_images.py` nutzen:
+```bash
+python capture_images.py
+```
+
+### 📚 Schreibweise der Kartennamen
 Um Kompatibilitätsprobleme zwischen den Skripten zu vermeiden, müssen Kartennamen einheitlich benannt werden. Verwende die folgende Schreibweise:
 
 - **Farben (Suits)**: `hearts`, `diamonds`, `spades`, `clubs`
@@ -43,25 +45,28 @@ Um Kompatibilitätsprobleme zwischen den Skripten zu vermeiden, müssen Kartenna
   - Zahlenkarten: `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`
   - Bildkarten: `jack`, `queen`, `king`, `ace`
 - **Formatierung**: `<Farbe>_<Wert>` (z. B. `hearts_2`, `spades_king`)
-- **Keine Großbuchstaben**: Nur Kleinbuchstaben erlaubt (`hearts_10` statt `Hearts_10`).
-- **Kein Leerzeichen, kein Sonderzeichen**: `_` als Trennzeichen nutzen.
+- **Nur Kleinbuchstaben**, keine Leerzeichen oder Sonderzeichen (`hearts_10`, nicht `Hearts 10`).
 
-- **Nutze das Skript `capture_images.py`, um den Prozess zu vereinfachen**:
-  ```bash
-  python capture_images.py
-  ```
-  Dies ermöglicht das einfache Erfassen von Bildern direkt über die Kamera.
-  
+
+
 
 ### 🔄 Vorverarbeitung starten:
+Falls du die Bilder verbessern möchtest, kannst du `enhance_images.py` nutzen:
+```bash
+python enhance_images.py
+```
+
+Danach kannst du die Vorverarbeitung durchführen:
 ```bash
 python preprocess.py
 ```
-Dies erstellt `processed_dataset/` mit skalierten & optimierten Bildern.
+Dies erstellt `datasets/processed_dataset/` mit skalierten & optimierten Bildern.
 
 ## 3. Modell trainieren
+Wähle, ob du mit den Rohdaten oder den vorverarbeiteten Daten trainieren möchtest:
 ```bash
-python train_model.py
+python train_model.py --use-processed  # Falls du die optimierten Bilder nutzen möchtest
+python train_model.py  # Falls du die Rohbilder nutzen möchtest
 ```
 Das Modell wird unter `models/card_model.h5` gespeichert.
 
@@ -91,8 +96,25 @@ Dann starte die Live-Erkennung mit:
 python live_card_detector.py
 ```
 
-
-
 Falls Karten manuell benannt oder gespeichert werden, müssen sie dieser Struktur folgen, damit sie in den Skripten korrekt erkannt werden.
 
-🎯 **Fertig! Dein Modell kann nun Karten erkennen!**
+
+
+## 🏆 Über den Autor
+Dieses Projekt wurde von **Kenneth Ballen Kallmann** entwickelt.  
+Falls du Fragen hast oder es weiterentwickeln möchtest, kontaktiere mich gerne auf GitHub:  
+[GitHub: KennethBall](https://github.com/KennethBall)
+
+## 🔏 Lizenz
+Dieses Projekt steht unter der **MIT-Lizenz**. 
+
+```
+MIT License
+
+Copyright (c) 2025 Kenneth Ballen Kallmann
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software...
+```
+
+🎯 **Fertig! Dein Modell kann nun Karten erkennen!** 🚀

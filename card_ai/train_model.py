@@ -13,7 +13,7 @@ parser.add_argument("--dataset", type=str, choices=["raw", "processed"], help="W
 args = parser.parse_args()
 
 # Basisverzeichnis korrekt setzen
-BASE_DATASET_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "datasets"))
+BASE_DATASET_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "datasets"))
 
 # Falls kein Argument übergeben wurde -> Benutzer fragen
 if args.dataset is None:
