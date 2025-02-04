@@ -103,7 +103,7 @@ Falls Karten manuell benannt oder gespeichert werden, müssen sie dieser Struktu
 ## 🏆 Über den Autor
 Dieses Projekt wurde von **Kenneth Ballen Kallmann** entwickelt.  
 Falls du Fragen hast oder es weiterentwickeln möchtest, kontaktiere mich gerne auf GitHub:  
-[GitHub: KennethBall](https://github.com/KennethBall)
+[GitHub: KennethBall](https://github.com/obind)
 
 ## 🔏 Lizenz
 Dieses Projekt steht unter der **MIT-Lizenz**. 
@@ -117,4 +117,4 @@ Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software...
 ```
 
-🎯 **Fertig! Dein Modell kann nun Karten erkennen!** 🚀
+
